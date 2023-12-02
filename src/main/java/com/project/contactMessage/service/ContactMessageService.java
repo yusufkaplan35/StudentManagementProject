@@ -6,6 +6,7 @@ import com.project.contactMessage.entity.ContactMessage;
 import com.project.contactMessage.mapper.ContactMessageMapper;
 import com.project.contactMessage.messages.Messages;
 import com.project.contactMessage.repository.ContactMessageRepository;
+import com.project.exception.ConflictException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.response.ResponseMessage;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -83,4 +87,33 @@ public class ContactMessageService {
                 ()->new ResourceNotFoundException(Messages.NOT_FOUND_MESSAGE)
         );
     }
+
+
+    public List<ContactMessage> searchByDateBetween(String beginDateString, String endDateString) {
+
+        try {
+            LocalDate beginDate= LocalDate.parse(beginDateString);
+            LocalDate endDate = LocalDate.parse(endDateString);
+            return contactMessageRepository.findMessagesBetweenDates(beginDate,endDate);
+        } catch (DateTimeParseException e) {
+            throw new ConflictException(Messages.WRONG_DATE_FORMAT);
+        }
+    }
+
+
+    public List<ContactMessage> searchBetweenTimes(String startHour, String startMinute, String endHour, String endMinute) {
+        try {
+            int startH = Integer.parseInt(startHour);
+            int startM = Integer.parseInt(startMinute);
+            int endH = Integer.parseInt(endHour);
+            int endM = Integer.parseInt(endMinute);
+
+            return contactMessageRepository.findMessagesBetweenTimes(startH,startM,endH,endM);
+        } catch (NumberFormatException e) {
+            throw new ConflictException(Messages.WRONG_TIME_FORMAT);
+        }
+    }
+
+
+
 }

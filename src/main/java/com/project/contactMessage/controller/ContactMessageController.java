@@ -3,6 +3,7 @@ package com.project.contactMessage.controller;
 import com.project.contactMessage.dto.ContactMessageRequest;
 import com.project.contactMessage.dto.ContactMessageResponse;
 
+import com.project.contactMessage.entity.ContactMessage;
 import com.project.contactMessage.service.ContactMessageService;
 import com.project.payload.response.ResponseMessage;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,5 +63,56 @@ public class ContactMessageController {
 
         return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
     }
+
+    @DeleteMapping("deleteByIdParam") // http://localhost:8080/contactMessages/deleteByIdParam?contactMessageId=1  + DELETE
+    public ResponseEntity<String> deleteByIdParam(@RequestParam(value ="contactMessageId") Long contactMessageId){
+        return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
+    }
+
+    @GetMapping("/getByIdParam") // http://localhost:8080/contactMessages/getByIdParam?contactMessageId=1  + GET
+    public ResponseEntity<ContactMessage> getByIdWithParam(@RequestParam(value = "contactMessageId") Long contactMessageId){
+        return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));
+    }
+
+
+    @GetMapping("/getById/{contactMessageId}") // http://localhost:8080/contactMessages/getById/1 + GET
+    public ResponseEntity<ContactMessage> getByIdWithPath(@PathVariable Long contactMessageId){
+        return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));
+    }
+
+
+    @GetMapping("/searchBetweenDates") // http://localhost:8080/contactMessages/searchBetweenDates?beginDate=2023-09-13&endDate=2023-09-15 + GET
+    public ResponseEntity<List<ContactMessage>> searchBetweenDates(
+            @RequestParam(value = "beginDate") String beginDateString,
+            @RequestParam(value = "endDate") String endDateString
+    ){
+        List<ContactMessage> contactMessages= contactMessageService.searchByDateBetween(beginDateString,endDateString);
+        return ResponseEntity.ok(contactMessages);
+    }
+
+    @GetMapping("/searchBetweenTimes") // http://localhost:8080/contactMessages/searchBetweenTimes?startHour=09&startMinute=00&endHour=17&endMinute=30 + GET
+    public ResponseEntity<List<ContactMessage>> searchBetweenTimes(
+            @RequestParam(value = "startHour") String startHour,
+            @RequestParam(value = "startMinute") String startMinute,
+            @RequestParam(value = "endHour") String endHour,
+            @RequestParam(value = "endMinute") String endMinute
+    ){
+     List<ContactMessage> contactMessages = contactMessageService.searchBetweenTimes(startHour,startMinute,endHour,endMinute);
+     return ResponseEntity.ok(contactMessages);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
