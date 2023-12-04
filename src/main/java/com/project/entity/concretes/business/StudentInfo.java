@@ -2,6 +2,7 @@ package com.project.entity.concretes.business;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.entity.concretes.user.User;
+import com.project.entity.enums.Note;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +33,7 @@ public class StudentInfo {
     private String infoNote;
 
     @Enumerated(EnumType.STRING)
-    private String letterGrade; // AA- Aa - aa
+    private Note letterGrade; // AA- Aa - aa
 
     @ManyToOne
     @JsonIgnore
@@ -43,13 +44,6 @@ public class StudentInfo {
     private User student;
 
     // TODO: LESSON - EducationTerm eklenecek
-
-
-
-
-
-
-
 
 
 
