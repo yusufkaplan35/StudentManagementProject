@@ -43,9 +43,10 @@ public class StudentInfo {
     @JsonIgnore
     private User student;
 
-    // TODO: LESSON - EducationTerm eklenecek
+    @ManyToOne
+    private Lesson lesson;
 
-
-
+    @OneToOne
+    private EducationTerm educationTerm;
 
 }
