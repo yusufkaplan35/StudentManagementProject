@@ -31,17 +31,17 @@ public class EducationTerm {
 
     @NotNull(message = "Start date must not be empty")
     @Column(name = "start_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
     @NotNull(message = "End date must not be empty")
     @Column(name = "end_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
     @NotNull(message = "Last registration date date must not be empty")
     @Column(name = "last_registration_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
     private LocalDate lastRegistrationDate;
 
     @OneToMany(mappedBy = "educationTerm", cascade = CascadeType.ALL)

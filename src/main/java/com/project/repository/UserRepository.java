@@ -9,5 +9,9 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User,Long> {
 
     User findByUsernameEquals(String username);
+    // alttaki ve üstteki aynı işi yapıyor
+    User findByUsername(String username);
+
+
 
 }
