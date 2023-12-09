@@ -1,8 +1,12 @@
 package com.project.service;
 
+import com.project.contactMessage.messages.Messages;
 import com.project.entity.concretes.user.User;
+import com.project.exception.BadRequestException;
 import com.project.payload.mappers.UserMapper;
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.request.LoginRequest;
+import com.project.payload.request.business.UpdatePasswordRequest;
 import com.project.payload.response.AuthResponse;
 import com.project.payload.response.UserResponse;
 import com.project.repository.UserRepository;
@@ -15,8 +19,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,6 +35,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     public ResponseEntity<AuthResponse> authenticateUser(LoginRequest loginRequest) {
@@ -73,6 +80,29 @@ public class AuthenticationService {
         User user = userRepository.findByUsername(username);
         //!!! Pojo --> DTO
         return userMapper.mapUserToUserResponse(user);
+    }
+
+
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest, HttpServletRequest request) {
+
+        String userName = (String) request.getAttribute("username");
+        User user = userRepository.findByUsername(userName);
+
+        // Built_IN kontrolu
+        if (Boolean.TRUE.equals(user.getBuilt_in())){ // TRUE - FALSE - NULL (NullPointerException)
+            throw  new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+        // Eski şifre bilgisi doğru mu?
+        if (!passwordEncoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())){
+            throw new BadRequestException(ErrorMessages.PASSWORD_NOT_MATCHED);
+        }
+        // Yeni şifre encode edilecek
+        String  hashedPassword= passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+
+        //update işlemi
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+
     }
 
 

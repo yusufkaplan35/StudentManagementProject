@@ -1,12 +1,15 @@
 package com.project.controller;
 
+import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.LoginRequest;
+import com.project.payload.request.business.UpdatePasswordRequest;
 import com.project.payload.response.AuthResponse;
 import com.project.payload.response.UserResponse;
 import com.project.service.AuthenticationService;
 import com.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,23 +21,32 @@ import javax.validation.Valid;
 public class AuthenticationController {
 
     private final UserService userService;
-
     private final AuthenticationService authenticationService;
 
+    //login kullanıcının yapmak istediği işlemler
     @PostMapping("/login") // http://localhost:8080/auth/login  + POST + JSON
     public ResponseEntity<AuthResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest){
 
         return authenticationService.authenticateUser(loginRequest);
     }
 
+    //kullanıcıya ait olan username bilgisi ile yapılan işlemler
     @GetMapping("/user") // http://localhost:8080/auth/user  + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER','TEACHER','STUDENT')")
     public ResponseEntity<UserResponse> findByUserName(HttpServletRequest request){
         String username = (String) request.getAttribute("username");
-        UserResponse userResponse = authenticationService.findByUserName(username);
+        UserResponse userResponse = authenticationService.findByUsername(username);
 
         return ResponseEntity.ok(userResponse);
+    }
 
-
+    @PatchMapping("/updatePassword") // http://localhost:8080/auth/updatePassword  + PATCH + JSON
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER','TEACHER','STUDENT')")
+    public ResponseEntity<String> updatePassword(@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest,
+                                                 HttpServletRequest request){
+        authenticationService.updatePassword(updatePasswordRequest,request);
+        String response = SuccessMessages.PASSWORD_CHANGED_RESPONSE_MESSAGE;
+        return  ResponseEntity.ok(response);
     }
 
 
