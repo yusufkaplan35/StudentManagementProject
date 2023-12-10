@@ -8,6 +8,7 @@ public class SuccessMessages {
     }
 
     public static final String PASSWORD_CHANGED_RESPONSE_MESSAGE = "Password Successfully Changed";
+    public static final String USER_CREATE = "User is saved Successfully";
 
 
 }
