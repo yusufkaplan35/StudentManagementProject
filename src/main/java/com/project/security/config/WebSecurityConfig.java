@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true) // metodlara yetkilendirme için
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
@@ -39,10 +40,11 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and()
                 .csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
+                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and() //security içinde oluşabilecek herhangi bir hata varsa
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers(AUTH_WHITE_LIST).permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated(); // istisna dışındakilere güvenlik uygula
+
         http.headers().frameOptions().sameOrigin();
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -57,7 +59,7 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // zorluk seviyesi
     }
 
     @Bean

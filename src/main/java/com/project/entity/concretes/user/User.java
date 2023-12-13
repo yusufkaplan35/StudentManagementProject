@@ -40,7 +40,7 @@ public class User {
     private String surname;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyy-MM-dd")
-    private LocalDate BirthDay;
+    private LocalDate birthDay;
 
     private String birthPlace;
 
@@ -60,6 +60,8 @@ public class User {
     private String fatherName;
 
     private int studentName;
+
+    private int studentNumber;
 
     private boolean isActive;
 

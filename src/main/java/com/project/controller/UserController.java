@@ -1,8 +1,10 @@
 package com.project.controller;
 
+import com.project.entity.concretes.user.User;
 import com.project.payload.request.user.UserRequest;
 import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.UserResponse;
+import com.project.payload.response.abstracts.BaseUserResponse;
 import com.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -40,6 +43,26 @@ public class UserController {
         Page<UserResponse> adminsOrDeans =userService.getUserByPage(page,size,sort,type,userRole);
 
         return new ResponseEntity<>(adminsOrDeans, HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserById/{userId}") // http://localhost:8080/user/getUserById/1 + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
+    public ResponseMessage<BaseUserResponse> getUserById(@PathVariable Long userId){
+        return userService.getUserById(userId);
+    }
+
+    @DeleteMapping("/delete/{id}") // http://localhost:8080/user/delete/3 + DELETE
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id, HttpServletRequest httpServletRequest){
+        return ResponseEntity.ok(userService.deleteUserById(id,httpServletRequest));
+    }
+
+    // Admin güncelleme yaparsa
+    @PutMapping("/update/{userId}") // http://localhost:8080/user/update/3 + PUT  + JSON
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseMessage<BaseUserResponse> updateAdminDeanViceDeanForAdmin(@RequestBody @Valid UserRequest userRequest,
+                                                                             @PathVariable Long userId){
+        return userService.updateUser(userRequest, userId);
     }
 
 

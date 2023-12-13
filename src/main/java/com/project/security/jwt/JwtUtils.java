@@ -22,6 +22,7 @@ public class JwtUtils {
     private long jwtExpirationMs;
 
     //Not: Generate JWT
+    //token oluşturma
     public String generateJwtToken(Authentication authentication){
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         return generateJwtTokenFromUsername(userDetails.getUsername());
@@ -29,17 +30,17 @@ public class JwtUtils {
 
     public String generateJwtTokenFromUsername(String username){
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .setSubject(username) //token hangi veri ile oluşturulacak
+                .setIssuedAt(new Date()) // token oluşturma tarihi
+                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs)) //token geçerlilik süresi  güncel tarih + tanımladığımız süre
+                .signWith(SignatureAlgorithm.HS512, jwtSecret) // token şifreleme algoritması
                 .compact();
     }
 
     // Not: Validate JWT
     public boolean validateJwtToken(String jwtToken){
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwtToken);
+        try {   // parçala
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwtToken); // token secret key ile oluşturulup oluşturulmadığı kontrol edildi
             return true;
         } catch (ExpiredJwtException e) {
             LOGGER.error("Jwt token is expired : {}", e.getMessage());

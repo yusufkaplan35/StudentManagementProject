@@ -22,7 +22,7 @@ public class UserDetailsImpl implements UserDetails {
     private String username;
     private String name;
     private Boolean isAdvisor;
-    @JsonIgnore
+    @JsonIgnore // bu objeyi döndürmek gerekirse password json da görünmesin
     private String password;
     private String ssn;
     private Collection<? extends GrantedAuthority> authorities;
@@ -76,7 +76,7 @@ public class UserDetailsImpl implements UserDetails {
 
     public boolean equals(Object o){
 
-        if(this ==o){
+        if(this == o){
             return true;
         }
 

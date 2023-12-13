@@ -40,10 +40,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if(jwt != null && jwtUtils.validateJwtToken(jwt) ){
                 String userName = jwtUtils.getUserNameFromJwtToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-                request.setAttribute("username", userName);
+                request.setAttribute("username", userName); //gelen requestte tokenin kime ait olduğu bilgisi setlendi
+
+                // authentication olan kullanıcı context e atıldı
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,null,userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); //ip adresi ve tarayıcı bilgileri alındı
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
             }
