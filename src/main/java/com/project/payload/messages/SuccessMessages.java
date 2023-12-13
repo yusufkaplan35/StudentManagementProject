@@ -11,6 +11,7 @@ public class SuccessMessages {
     public static final String USER_CREATE = "User is saved Successfully";
     public static final String USER_FOUND = "User is found Successfully";
     public static final String USER_DELETE = "User is deleted Successfully";
+    public static final String USER_UPDATE_MESSAGE = "User is updated Successfully";
 
 
 

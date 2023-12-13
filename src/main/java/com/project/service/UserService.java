@@ -8,6 +8,7 @@ import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.user.UserRequest;
+import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.abstracts.BaseUserResponse;
@@ -19,11 +20,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final PageableHelper pageableHelper;
     private final MethodHelper methodHelper;
+
 
     public ResponseMessage<UserResponse> saveUser(UserRequest userRequest, String userRole) { //
         //!!! username-ssn-phoneNumber-email unique mi ??
@@ -121,7 +126,6 @@ public class UserService {
                 throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
             }
         }
-
         userRepository.deleteById(id);
         return SuccessMessages.USER_DELETE;
     }
@@ -134,9 +138,60 @@ public class UserService {
         methodHelper.checkBuiltIn(user);
         //!!! unique kontrolu
         uniquePropertyValidator.checkUniqueProperties(user, userRequest);
+        // DTO ->POJO
+        User updatedUser = userMapper.mapUserRequestToUpdatedUser(userRequest,userId);
+        //Password encode
+        updatedUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        //Rol setleniyor
+        updatedUser.setUserRole(user.getUserRole());
 
+        User savedUser = userRepository.save(updatedUser);
+        return ResponseMessage.<BaseUserResponse>builder()
+                .message(SuccessMessages.USER_UPDATE_MESSAGE)
+                .status(HttpStatus.OK)
+                .object(userMapper.mapUserToUserResponse(savedUser))
+                .build();
     }
 
+
+    public ResponseEntity<String> updateUserForUsers(UserRequestWithoutPassword userRequest,
+                                                     HttpServletRequest request) {
+        String userName = (String) request.getAttribute("username");  //AuthTokenFilter classta yaptık
+        User user = userRepository.findByUsername(userName);
+        //!!! builtIn kontrol
+        methodHelper.checkBuiltIn(user);
+        //!!! unique kontrol
+        uniquePropertyValidator.checkUniqueProperties(user, userRequest);
+        //!!! DTO --> POJO
+        user.setUsername(userRequest.getUsername());
+        user.setBirthDay(userRequest.getBirthDay());
+        user.setEmail(userRequest.getEmail());
+        user.setPhoneNumber(userRequest.getPhoneNumber());
+        user.setBirthPlace(userRequest.getBirthPlace());
+        user.setGender(userRequest.getGender());
+        user.setName(userRequest.getName());
+        user.setSurname(userRequest.getSurname());
+        user.setSsn(userRequest.getSsn());
+
+        userRepository.save(user);
+
+        String message = SuccessMessages.USER_UPDATE_MESSAGE;
+
+        return ResponseEntity.ok(message);
+    }
+
+
+    public List<UserResponse> getUserByName(String name) {
+
+            return userRepository.getUserByNameContaining(name)
+                    .stream()
+                    .map(userMapper::mapUserToUserResponse)
+                    .collect(Collectors.toList());
+    }
+
+    public long countAllAdmins() {
+        return userRepository.countAdmin(RoleType.ADMIN); //JPQL
+    }
 
 
 }

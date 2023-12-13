@@ -2,12 +2,15 @@ package com.project.repository;
 
 
 import com.project.entity.concretes.user.User;
+import com.project.entity.enums.RoleType;
 import com.project.payload.response.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
@@ -26,6 +29,13 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT u FROM User u WHERE u.userRole.roleName = :roleName")  // JPQL
     Page<User> findByUserByRole(String roleName, Pageable pageable);
+
+    List<User> getUserByNameContaining(String name);
+
+    // value attribute kullanılabilir görmek için yaptık.
+    // user ların içerisinde userların sayısını arıyoruz ->COUNT yaptık
+    @Query(value = "SELECT COUNT(u) FROM User u WHERE u.userRole.roleType = ?1")
+    long countAdmin(RoleType roleType);
 
 
 }

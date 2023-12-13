@@ -2,6 +2,7 @@ package com.project.controller;
 
 import com.project.entity.concretes.user.User;
 import com.project.payload.request.user.UserRequest;
+import com.project.payload.request.user.UserRequestWithoutPassword;
 import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.UserResponse;
 import com.project.payload.response.abstracts.BaseUserResponse;
@@ -13,8 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -64,6 +67,21 @@ public class UserController {
                                                                              @PathVariable Long userId){
         return userService.updateUser(userRequest, userId);
     }
+
+    @PatchMapping("/updateUser") // http://localhost:8080/user/updateUser + PATCH + JSON
+    @PreAuthorize("hasAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER','TEACHER')")
+    public ResponseEntity<String> updateUserForUsers(@RequestBody @Valid UserRequestWithoutPassword userRequestWithoutPassword,
+                                                        HttpServletRequest request){
+       return userService.updateUserForUsers(userRequestWithoutPassword,request);
+    }
+
+    //isim ile user çağırma
+    @GetMapping("/getUserByName") // http://localhost:8080/user/getUserByName + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    public List<UserResponse> getUserByName(@RequestParam (name = "name") String userName){
+        return userService.getUserByName(userName);
+    }
+
 
 
 }
