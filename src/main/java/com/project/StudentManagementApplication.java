@@ -4,6 +4,7 @@ import com.project.entity.concretes.user.UserRole;
 import com.project.entity.enums.Gender;
 import com.project.entity.enums.RoleType;
 import com.project.payload.request.user.UserRequest;
+import com.project.repository.UserRepository;
 import com.project.repository.UserRoleRepository;
 import com.project.service.UserRoleService;
 import com.project.service.UserService;
@@ -85,4 +86,25 @@ public class StudentManagementApplication implements CommandLineRunner {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

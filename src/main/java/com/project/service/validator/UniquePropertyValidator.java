@@ -1,11 +1,9 @@
 package com.project.service.validator;
 
-import com.project.contactMessage.messages.Messages;
 import com.project.entity.concretes.user.User;
 import com.project.exception.ConflictException;
 import com.project.payload.messages.ErrorMessages;
 import com.project.payload.request.abstracts.AbstractUserRequest;
-import com.project.payload.request.user.UserRequest;
 import com.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,22 +14,23 @@ public class UniquePropertyValidator {
 
     private final UserRepository userRepository;
 
+
     public void checkDuplicate(String username, String ssn, String phone, String email){
 
-        if (userRepository.existsByUsername(username)){
-            throw new ConflictException(String.format(ErrorMessages.ALLREADY_REGISTER_MESSAGE_USERNAME,username));
+        if(userRepository.existsByUsername(username)){
+            throw new ConflictException(String.format(ErrorMessages.ALREADY_REGISTER_MESSAGE_USERNAME, username));
         }
-        if (userRepository.existsBySsn(ssn)){
-            throw new ConflictException(String.format(ErrorMessages.ALLREADY_REGISTER_MESSAGE_SSN,ssn));
+        if(userRepository.existsBySsn(ssn)){
+            throw new ConflictException(String.format(ErrorMessages.ALREADY_REGISTER_MESSAGE_SSN, ssn));
         }
-        if (userRepository.existsByPhoneNumber(phone)){
-            throw new ConflictException(String.format(ErrorMessages.ALLREADY_REGISTER_MESSAGE_PHONE,phone));
+        if(userRepository.existsByPhoneNumber(phone)){
+            throw new ConflictException(String.format(ErrorMessages.ALREADY_REGISTER_MESSAGE_PHONE, phone));
         }
-        if (userRepository.existsByEmail(email)){
-            throw new ConflictException(String.format(ErrorMessages.ALLREADY_REGISTER_MESSAGE_EMAIL,email));
+        if(userRepository.existsByEmail(email)){
+            throw new ConflictException(String.format(ErrorMessages.ALREADY_REGISTER_MESSAGE_EMAIL, email));
         }
-    }
 
+    }
 
     public void checkUniqueProperties(User user, AbstractUserRequest abstractUserRequest){
 

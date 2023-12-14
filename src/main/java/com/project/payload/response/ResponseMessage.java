@@ -11,15 +11,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@JsonInclude(JsonInclude.Include.NON_NULL) // alttaki fieldlerden null olan varsa göstermesin
-public class ResponseMessage <E>{
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ResponseMessage<E> {
 
     private E object;
-
     private String message;
-
     private HttpStatus status;
-
-
-
 }

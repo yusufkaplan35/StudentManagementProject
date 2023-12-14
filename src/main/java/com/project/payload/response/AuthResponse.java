@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,13 +14,8 @@ import lombok.NoArgsConstructor;
 public class AuthResponse {
 
     private String username;
-
     private String ssn;
-
     private String role;
-
     private String token;
-
     private String name;
-
 }

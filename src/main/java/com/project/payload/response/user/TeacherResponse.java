@@ -19,6 +19,4 @@ public class TeacherResponse extends BaseUserResponse {
 
     private Set<LessonProgram> lessonPrograms;
     private Boolean isAdvisorTeacher;
-
-
 }

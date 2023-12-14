@@ -12,5 +12,4 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class UserRequest extends BaseUserRequest {
 
-
 }

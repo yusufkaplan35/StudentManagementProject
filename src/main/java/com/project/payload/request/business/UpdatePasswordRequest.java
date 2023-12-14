@@ -18,6 +18,4 @@ public class UpdatePasswordRequest {
 
     @NotBlank(message = "Please provide new password")
     private String newPassword;
-
-
 }
