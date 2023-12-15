@@ -6,6 +6,7 @@ import com.project.payload.mappers.UserMapper;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.user.TeacherRequest;
 import com.project.payload.response.ResponseMessage;
+import com.project.payload.response.user.StudentResponse;
 import com.project.payload.response.user.TeacherResponse;
 import com.project.repository.UserRepository;
 import com.project.service.UserRoleService;
@@ -15,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +79,19 @@ public class TeacherService {
                 .message(SuccessMessages.TEACHER_UPDATE)
                 .status(HttpStatus.OK)
                 .build();
+    }
+
+
+    public List<StudentResponse> getAllStudentByAdvisorUsername(String userName) {
+        // user kontrolü
+        User teacher = methodHelper.isUserExistByUsername(userName);
+        //isAdvisor kontrol
+        methodHelper.checkAdvisor(teacher);
+
+        return userRepository.findByAdvisorTeacherId(teacher.getId())
+                .stream().map(userMapper::mapUserToStudentResponse)
+                .collect(Collectors.toList());
+
     }
 
 

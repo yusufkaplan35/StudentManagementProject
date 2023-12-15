@@ -21,6 +21,16 @@ public class MethodHelper {
                 new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_MESSAGE, userId)));
     }
 
+    //isUserExistByUsername
+    public User isUserExistByUsername(String username){
+        User user =  userRepository.findByUsernameEquals(username);
+        if(user.getId() == null) {
+            throw new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_USER_MESSAGE_WITH_USERNAME,username));
+        }
+        return user;
+    }
+
+
     //built In kontrolü
     public void checkBuiltIn(User user) {
         if(Boolean.TRUE.equals(user.getBuilt_in())) {
@@ -33,6 +43,13 @@ public class MethodHelper {
         if (!user.getUserRole().getRoleType().equals(roleType)){                                  // id ve role'ü generic olarak yazmak için String.format yaptık
             throw new ResourceNotFoundException(
                     String.format(ErrorMessages.NOT_FOUND_USER_WITH_ROLE_MESSAGE,user.getId(),roleType));
+        }
+    }
+
+    //!!! Gelen User Advicor degilse exception firlatan yardimci metod
+    public void checkAdvisor(User user){
+        if(Boolean.FALSE.equals(user.getIsAdvisor())){
+            throw new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVISOR_MESSAGE, user.getId()));
         }
     }
 
