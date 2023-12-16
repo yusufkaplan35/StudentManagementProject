@@ -46,7 +46,7 @@ public class MethodHelper {
         }
     }
 
-    //!!! Gelen User Advicor degilse exception firlatan yardimci metod
+    //!!! Gelen User Advisor degilse exception firlatan yardimci metod
     public void checkAdvisor(User user){
         if(Boolean.FALSE.equals(user.getIsAdvisor())){
             throw new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_ADVISOR_MESSAGE, user.getId()));

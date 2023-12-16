@@ -1,6 +1,7 @@
 package com.project.controller.user;
 import com.project.payload.request.user.TeacherRequest;
 import com.project.payload.response.ResponseMessage;
+import com.project.payload.response.UserResponse;
 import com.project.payload.response.user.StudentResponse;
 import com.project.payload.response.user.TeacherResponse;
 import com.project.service.user.TeacherService;
@@ -41,8 +42,28 @@ public class TeacherController {
     public List<StudentResponse> getAllStudentByAdvisorUsername(HttpServletRequest request){
         String userName = request.getHeader("username");
         return teacherService.getAllStudentByAdvisorUsername(userName);
-
     }
+
+    @PatchMapping("/saveAdvisorTeacher/{teacherId}") // http://localhost:8080/teacher/saveAdvisorTeacher/1 + PATCH
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    public ResponseMessage<UserResponse> saveAdvisorTeacher(@PathVariable Long teacherId){
+        return teacherService.saveAdvisorTeacher(teacherId);
+    }
+
+    @DeleteMapping("/deleteAdvisorTeacherById/{id}") // http://localhost:8080/teacher/deleteAdvisorTeacherById/1 + DELETE
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    public ResponseMessage<UserResponse> deleteAdvisorTeacherById(@PathVariable Long id){
+        return teacherService.deleteAdvisorTeacherById(id);
+    }
+
+    @GetMapping("/getAllAdvisorTeacher")// http://localhost:8080/teacher/getAllAdvisorTeacher + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    public List<UserResponse> getAllAdvisorTeacher(){
+        return teacherService.getAllAdvisorTeacher();
+    }
+
+
+
 
 
 }

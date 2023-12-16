@@ -2,10 +2,13 @@ package com.project.service.user;
 
 import com.project.entity.concretes.user.User;
 import com.project.entity.enums.RoleType;
+import com.project.exception.ConflictException;
 import com.project.payload.mappers.UserMapper;
+import com.project.payload.messages.ErrorMessages;
 import com.project.payload.messages.SuccessMessages;
 import com.project.payload.request.user.TeacherRequest;
 import com.project.payload.response.ResponseMessage;
+import com.project.payload.response.UserResponse;
 import com.project.payload.response.user.StudentResponse;
 import com.project.payload.response.user.TeacherResponse;
 import com.project.repository.UserRepository;
@@ -90,6 +93,60 @@ public class TeacherService {
 
         return userRepository.findByAdvisorTeacherId(teacher.getId())
                 .stream().map(userMapper::mapUserToStudentResponse)
+                .collect(Collectors.toList());
+
+    }
+
+
+    public ResponseMessage<UserResponse> saveAdvisorTeacher(Long teacherId) {
+        //!!! id'li User var mi kontrolu
+        User teacher = methodHelper.isUserExist(teacherId);
+        //!!! id ile gelen User, Teacher mi kontrolurrorMessages.
+        methodHelper.checkRole(teacher, RoleType.TEACHER);
+        //!!! id ile gelen Teacher, zaten Advisor mi kontrolu
+        if(Boolean.TRUE.equals(teacher.getIsAdvisor())){
+            throw new ConflictException(
+                    String.format(ErrorMessages.ALREADY_EXIST_ADVISOR_MESSAGE, teacherId));
+        }
+        teacher.setIsAdvisor(Boolean.TRUE);
+        userRepository.save(teacher);
+
+        return ResponseMessage.<UserResponse>builder()
+                .message(SuccessMessages.ADVISOR_TEACHER_SAVE)
+                .object(userMapper.mapUserToUserResponse(teacher))
+                .status(HttpStatus.OK)
+                .build();
+    }
+
+
+    public ResponseMessage<UserResponse> deleteAdvisorTeacherById(Long teacherId) {
+
+        //!!! id var mi ?
+        User teacher = methodHelper.isUserExist(teacherId);
+        //!!! Teacher advisor mi ?
+        methodHelper.checkRole(teacher, RoleType.TEACHER); // Optional
+        methodHelper.checkAdvisor(teacher);
+        teacher.setIsAdvisor(Boolean.FALSE);
+        userRepository.save(teacher);
+
+        //!!! silinen Advisor Teacher in rehberligindeki ogrencileri ile irtibatini kopariyoruz
+        List<User> allStudents = userRepository.findByAdvisorTeacherId(teacherId);
+        if(!allStudents.isEmpty()){
+            allStudents.forEach(students-> students.setAdvisorTeacherId(null));
+        }
+
+        return ResponseMessage.<UserResponse>builder()
+                .message(SuccessMessages.ADVISOR_TEACHER_DELETE)
+                .object(userMapper.mapUserToUserResponse(teacher))
+                .status(HttpStatus.OK)
+                .build();
+    }
+
+
+    public List<UserResponse> getAllAdvisorTeacher() {
+
+        return userRepository.findAllByAdvisor(Boolean.TRUE).stream()
+                .map(userMapper::mapUserToUserResponse)
                 .collect(Collectors.toList());
 
     }
