@@ -44,6 +44,14 @@ public class StudentController {
         return studentService.updateStudentForManagers(userId,studentRequest);
     }
 
+    //TODO: LessonProgram Ekleme
+
+    @GetMapping("/changeStatus") // http://localhost:8080/students/changeStatus?id=1&status=true + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    public ResponseMessage changeStatusOfStudent(@RequestParam Long id, @RequestParam boolean status){
+        return studentService.changeStatusOfStudent(id,status);
+    }
+
 
 
 
