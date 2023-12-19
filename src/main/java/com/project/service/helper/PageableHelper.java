@@ -15,8 +15,8 @@ public class PageableHelper {  //Birden fazla pageable ihtiyacı olduğu için b
         if(Objects.equals(type, "desc")){  // type -> null olma durumu kontrol ediliyor. Exception almadan kontrol
             pageable = PageRequest.of(page, size, Sort.by(sort).descending());
         }
-
         return pageable;
     }
+
 
 }
