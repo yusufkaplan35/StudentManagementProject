@@ -136,6 +136,10 @@ public class EducationTermService {
                 .build();
     }
 
+    //!!! LessonProgram icin yazildi
+    public EducationTerm findEducationTermById(Long id){
+        return isEducationTermExist(id);
+    }
 
 
 
