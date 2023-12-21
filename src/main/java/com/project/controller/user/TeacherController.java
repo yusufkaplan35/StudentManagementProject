@@ -1,4 +1,5 @@
 package com.project.controller.user;
+import com.project.payload.request.business.ChooseLessonTeacherRequest;
 import com.project.payload.request.user.TeacherRequest;
 import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.UserResponse;
@@ -62,7 +63,12 @@ public class TeacherController {
         return teacherService.getAllAdvisorTeacher();
     }
 
-
+    @PostMapping("/addLessonProgram")// http://localhost:8080/teacher/addLessonProgram  + POST + JSON
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    public ResponseMessage<TeacherResponse> chooseLesson(@RequestBody @Valid
+                                                         ChooseLessonTeacherRequest chooseLessonTeacherRequest){
+        return teacherService.addLessonProgram(chooseLessonTeacherRequest);
+    }
 
 
 
