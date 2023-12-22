@@ -3,6 +3,8 @@ package com.project.service.business;
 import com.project.entity.concretes.business.EducationTerm;
 import com.project.entity.concretes.business.Lesson;
 import com.project.entity.concretes.business.LessonProgram;
+import com.project.entity.concretes.user.User;
+import com.project.entity.enums.RoleType;
 import com.project.exception.ResourceNotFoundException;
 import com.project.payload.mappers.LessonProgramMapper;
 import com.project.payload.messages.ErrorMessages;
@@ -12,6 +14,7 @@ import com.project.payload.response.ResponseMessage;
 import com.project.payload.response.business.LessonProgramResponse;
 import com.project.repository.business.LessonProgramRepository;
 import com.project.repository.business.LessonRepository;
+import com.project.service.helper.MethodHelper;
 import com.project.service.helper.PageableHelper;
 import com.project.service.validator.DateTimeValidator;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ public class LessonProgramService {
     private final DateTimeValidator dateTimeValidator;
     private final LessonProgramMapper lessonProgramMapper;
     private final PageableHelper pageableHelper;
+    private final MethodHelper methodHelper;
 
     public ResponseMessage<LessonProgramResponse> saveLessonProgram(LessonProgramRequest lessonProgramRequest) {
         Set<Lesson> lessons =  lessonService.getAllLessonByLessonId(lessonProgramRequest.getLessonIdList());
@@ -135,6 +139,24 @@ public class LessonProgramService {
         return lessonPrograms;
     }
 
+    public Set<LessonProgramResponse> getByTeacherId(Long teacherId) {
+        User teacher = methodHelper.isUserExist(teacherId);
+        methodHelper.checkRole(teacher, RoleType.TEACHER);
 
+        return lessonProgramRepository.findByUsers_IdEquals(teacherId) // Derived
+                .stream()
+                .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<LessonProgramResponse> getByStudentId(Long studentId) {
+        User student = methodHelper.isUserExist(studentId);
+        methodHelper.checkRole(student,RoleType.STUDENT);
+
+        return lessonProgramRepository.findByUsers_IdEquals(studentId)// yukarda yazilan
+                .stream()
+                .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse)
+                .collect(Collectors.toSet());
+    }
 
 }
