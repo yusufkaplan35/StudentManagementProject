@@ -18,5 +18,10 @@ public class PageableHelper {  //Birden fazla pageable ihtiyacı olduğu için b
         return pageable;
     }
 
+    public Pageable getPageableWithProperties(int page, int size){
+        return PageRequest.of(page, size,Sort.by("id").descending());
+    }
+
+
 
 }
