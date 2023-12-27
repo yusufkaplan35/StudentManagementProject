@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/lessonPrograms")
+@RequiredArgsConstructor
 public class LessonProgramController {
 
     private final LessonProgramService lessonProgramService;
@@ -97,9 +97,5 @@ public class LessonProgramController {
     public Set<LessonProgramResponse> getByStudentId(@PathVariable Long studentId){
         return lessonProgramService.getByStudentId(studentId);
     }
-
-
-
-
 
 }

@@ -67,15 +67,13 @@ public class LessonProgramService {
                 .build();
     }
 
-
     public List<LessonProgramResponse> getAllLessonPrograms() {
-            return lessonProgramRepository
-                    .findAll()
-                    .stream()
-                    .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse)
-                    .collect(Collectors.toList());
+        return lessonProgramRepository
+                .findAll()
+                .stream()
+                .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse)
+                .collect(Collectors.toList());
     }
-
 
     public LessonProgramResponse getLessonProgramById(Long id) {
         return lessonProgramMapper.mapLessonProgramToLessonProgramResponse(isLessonProgramExistById(id));
@@ -92,7 +90,6 @@ public class LessonProgramService {
                 .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse)
                 .collect(Collectors.toList());
     }
-
 
     public List<LessonProgramResponse> getAllAssigned() {
 
@@ -118,14 +115,13 @@ public class LessonProgramService {
                 .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse);
     }
 
-
     public Set<LessonProgramResponse> getAllLessonProgramByUser(HttpServletRequest httpServletRequest) {
         String userName = (String) httpServletRequest.getAttribute("username");
 
         return lessonProgramRepository.getLessonProgramByUsersUsername(userName)
-              .stream()
-              .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse)
-              .collect(Collectors.toSet());
+                .stream()
+                .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse)
+                .collect(Collectors.toSet());
     }
 
     //!!! TeacherService icin yazildi
@@ -158,5 +154,4 @@ public class LessonProgramService {
                 .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse)
                 .collect(Collectors.toSet());
     }
-
 }
